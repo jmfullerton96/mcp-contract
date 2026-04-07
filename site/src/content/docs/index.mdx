@@ -1,0 +1,44 @@
+---
+title: MCP Contract
+description: An open specification for composable AI workflow bundles.
+template: splash
+hero:
+  tagline: An open specification for composable AI workflow bundles. Mix and match prompts, tools, and UIs — from different authors, different versions, or both — without forking anything.
+  actions:
+    - text: Get Started
+      link: /quickstart/
+      icon: right-arrow
+      variant: primary
+    - text: Read the Spec
+      link: /specification/
+      variant: minimal
+---
+
+import { Card, CardGrid } from "@astrojs/starlight/components";
+
+## The Problem
+
+MCP servers are monoliths. If you want to use one server's reasoning prompts with another server's tools and a third server's UI, you fork all three. MCP Contract fixes this by separating bundles into independently authored, versioned, and composable **layers**.
+
+## The Layers
+
+<CardGrid>
+  <Card title="Prompts" icon="document">
+    Reasoning logic. Markdown with typed input/output contracts.
+  </Card>
+  <Card title="Tools" icon="setting">
+    State and execution. MCP tool servers that provide data schemas.
+  </Card>
+  <Card title="Apps" icon="laptop">
+    Interactive views. UIs that consume prompt outputs and tool data.
+  </Card>
+  <Card title="Skills" icon="puzzle">
+    Platform adaptation. Hints for specific LLM hosts and runtimes.
+  </Card>
+</CardGrid>
+
+Layers are wired together through **contracts** — typed `provides`/`consumes` declarations backed by JSON Schema. A prompt layer provides an output shape. A tool layer provides data schemas. An app layer consumes both.
+
+## Status
+
+**v0.1.0-draft** — Spec, JSON Schema, CLI (`mcpc`), and reference implementation available.

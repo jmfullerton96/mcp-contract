@@ -1,0 +1,37 @@
+/* MCP Contract — monochrome, blue-gray aesthetic */
+
+:root {
+  --sl-color-accent-low: #1a2332;
+  --sl-color-accent: #5b7a9d;
+  --sl-color-accent-high: #c4d4e4;
+  --sl-color-white: #f5f7fa;
+  --sl-color-gray-1: #e3e8ee;
+  --sl-color-gray-2: #c1c9d4;
+  --sl-color-gray-3: #8b99a8;
+  --sl-color-gray-4: #5e6d7e;
+  --sl-color-gray-5: #3d4c5c;
+  --sl-color-gray-6: #2a3544;
+  --sl-color-black: #141c26;
+}
+
+:root[data-theme="dark"] {
+  --sl-color-accent-low: #1a2332;
+  --sl-color-accent: #6b8db5;
+  --sl-color-accent-high: #d0dce8;
+  --sl-color-white: #f0f3f7;
+  --sl-color-gray-1: #d0d8e2;
+  --sl-color-gray-2: #9daab9;
+  --sl-color-gray-3: #6b7a8c;
+  --sl-color-gray-4: #48586b;
+  --sl-color-gray-5: #2d3a4a;
+  --sl-color-gray-6: #1c2735;
+  --sl-color-black: #0f1820;
+}
+
+/* Tighten up the font stack */
+:root {
+  --sl-font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+  --sl-font-mono: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono",
+    "Lucida Console", Monaco, monospace;
+}
