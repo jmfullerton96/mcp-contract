@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="docs/banner.png" alt="MCP Contract" width="100%">
-</p>
+# MCP Contract
 
 [![CI](https://github.com/jmfullerton96/mcp-contract/actions/workflows/ci.yml/badge.svg)](https://github.com/jmfullerton96/mcp-contract/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/mcpc-cli)](https://pypi.org/project/mcpc-cli/)
