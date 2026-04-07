@@ -1,0 +1,71 @@
+{
+  "$schema": "https://mcp-contract.dev/schema/0.1.0.json",
+  "name": "due-diligence",
+  "version": "0.1.0",
+  "description": "Financial due diligence workflow with SEC filing analysis and comparable company modeling.",
+  "author": {
+    "name": "MCP Contract Examples"
+  },
+  "license": "Apache-2.0",
+
+  "layers": {
+    "prompts": {
+      "entry": "prompts/main.md",
+      "modules": [
+        "prompts/risk-framework.md",
+        "prompts/output-format.md"
+      ],
+      "provides": [
+        {
+          "name": "analysis-request",
+          "schema": "schemas/analysis-request.json",
+          "description": "Structured analysis request with company identifier, analysis type, and output preferences."
+        }
+      ]
+    },
+
+    "tools": {
+      "entry": "tools/server.py",
+      "runtime": "python",
+      "provides": [
+        {
+          "name": "sec-filings",
+          "schema": "schemas/sec-filings.json",
+          "description": "Retrieves and parses SEC EDGAR filings by CIK or ticker."
+        },
+        {
+          "name": "comps-table",
+          "schema": "schemas/comps-table.json",
+          "description": "Generates comparable company analysis with configurable multiples."
+        }
+      ]
+    },
+
+    "apps": {
+      "entry": "apps/memo.html",
+      "consumes": [
+        {
+          "name": "comps-table",
+          "schema": "schemas/comps-table.json"
+        },
+        {
+          "name": "analysis-request",
+          "schema": "schemas/analysis-request.json"
+        }
+      ]
+    },
+
+    "skills": {
+      "targets": {
+        "claude": "skills/claude.md"
+      }
+    }
+  },
+
+  "compiler_compatibility": ["claude", "gpt", "gemini"],
+
+  "compose": {
+    "chain": ["prompts", "tools", "apps"],
+    "fallback": "prompts-only"
+  }
+}

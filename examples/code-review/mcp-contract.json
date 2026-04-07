@@ -1,0 +1,33 @@
+{
+  "$schema": "https://mcp-contract.dev/schema/0.1.0.json",
+  "name": "code-review",
+  "version": "0.1.0",
+  "description": "Structured code review methodology — produces categorized findings with severity ratings.",
+  "author": {
+    "name": "MCP Contract Examples"
+  },
+  "license": "Apache-2.0",
+  "layers": {
+    "prompts": {
+      "entry": "prompts/main.md",
+      "provides": [
+        {
+          "name": "code-review-output",
+          "schema": "schemas/code-review-output.json",
+          "description": "Structured review findings with severity, category, and recommendations."
+        }
+      ]
+    }
+  },
+  "compiler_compatibility": [
+    "claude",
+    "gpt",
+    "gemini"
+  ],
+  "compose": {
+    "chain": [
+      "prompts"
+    ],
+    "fallback": "prompts-only"
+  }
+}

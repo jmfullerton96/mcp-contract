@@ -1,0 +1,58 @@
+{
+  "$id": "https://mcp-contract.dev/examples/code-review/schemas/code-review-output/0.1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CodeReviewOutput",
+  "description": "Structured code review findings with severity, category, and recommendations.",
+  "type": "object",
+  "required": ["findings", "verdict"],
+  "properties": {
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["category", "severity", "description", "recommendation"],
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": ["correctness", "security", "performance", "maintainability", "testing"],
+            "description": "Review category this finding belongs to."
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "warning", "suggestion"],
+            "description": "How urgent this finding is."
+          },
+          "file": {
+            "type": "string",
+            "description": "File path where the finding applies."
+          },
+          "line_range": {
+            "type": "object",
+            "properties": {
+              "start": { "type": "integer" },
+              "end": { "type": "integer" }
+            },
+            "description": "Line range within the file."
+          },
+          "description": {
+            "type": "string",
+            "description": "What the issue is."
+          },
+          "recommendation": {
+            "type": "string",
+            "description": "Concrete suggestion for how to fix it."
+          }
+        }
+      }
+    },
+    "verdict": {
+      "type": "string",
+      "enum": ["approve", "request-changes", "needs-discussion"],
+      "description": "Overall review verdict."
+    },
+    "summary": {
+      "type": "string",
+      "description": "Brief overall assessment of the changes."
+    }
+  }
+}

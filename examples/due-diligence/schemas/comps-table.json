@@ -1,0 +1,66 @@
+{
+  "$id": "https://mcp-contract.dev/examples/due-diligence/schemas/comps-table/0.1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CompsTable",
+  "description": "Comparable company analysis output with peer metrics and aggregate multiples.",
+  "type": "object",
+  "required": ["companies", "multiples", "generated_at"],
+  "properties": {
+    "companies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["ticker", "name", "market_cap"],
+        "properties": {
+          "ticker": {
+            "type": "string",
+            "description": "Stock ticker symbol."
+          },
+          "name": {
+            "type": "string",
+            "description": "Company name."
+          },
+          "market_cap": {
+            "type": "number",
+            "description": "Market capitalization in USD."
+          },
+          "ev_ebitda": {
+            "type": "number",
+            "description": "Enterprise value to EBITDA ratio."
+          },
+          "pe_ratio": {
+            "type": "number",
+            "description": "Price to earnings ratio."
+          },
+          "revenue_growth": {
+            "type": "number",
+            "description": "Year-over-year revenue growth as a decimal (e.g., 0.15 = 15%)."
+          },
+          "gross_margin": {
+            "type": "number",
+            "description": "Gross margin as a decimal."
+          },
+          "debt_to_equity": {
+            "type": "number",
+            "description": "Debt to equity ratio."
+          }
+        }
+      }
+    },
+    "multiples": {
+      "type": "object",
+      "description": "Aggregate multiple statistics across the peer set.",
+      "properties": {
+        "median_ev_ebitda": { "type": "number" },
+        "median_pe": { "type": "number" },
+        "mean_revenue_growth": { "type": "number" },
+        "median_gross_margin": { "type": "number" }
+      }
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of when this analysis was generated."
+    }
+  }
+}
