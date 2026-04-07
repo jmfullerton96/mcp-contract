@@ -22,8 +22,5 @@ venv/
 .env
 .env.*
 
-# Drafts
-docs/drafts/
-
 # Build artifacts
 *.mcpc
