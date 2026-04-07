@@ -508,7 +508,58 @@ Requiring platform-specific skills would undermine compiler agnosticism. A bundl
 
 ---
 
-## 8. Reference Implementation
+## 8. Distribution
+
+### 8.1 The `.mcpc` Archive Format
+
+A `.mcpc` file is a distributable MCP Contract bundle — a ZIP archive with the `.mcpc` extension containing all bundle files. The archive preserves the directory structure relative to the bundle root.
+
+```
+due-diligence-0.1.0.mcpc    ← ZIP archive
+├── mcp-contract.json        ← manifest (must be at archive root)
+├── prompts/
+│   ├── main.md
+│   ├── risk-framework.md
+│   └── output-format.md
+├── schemas/
+│   ├── analysis-request.json
+│   ├── comps-table.json
+│   └── sec-filings.json
+├── tools/
+│   └── server.py
+├── apps/
+│   └── memo.html
+└── skills/
+    └── claude.md
+```
+
+Archive conventions:
+
+- **Naming:** `<name>-<version>.mcpc` where `name` and `version` match the manifest.
+- **Validation:** A bundle must pass `mcpc validate` before packing. Invalid bundles cannot be archived.
+- **Root manifest:** `mcp-contract.json` must be at the archive root (not nested in a subdirectory).
+- **Exclusions:** Build artifacts (`.git`, `__pycache__`, `node_modules`, `.venv`) are excluded.
+- **Compression:** ZIP deflate. Archives are typically small (prompts are text, schemas are JSON).
+
+### 8.2 Creating Archives
+
+```sh
+mcpc pack path/to/bundle                    # → <name>-<version>.mcpc in parent dir
+mcpc pack path/to/bundle -o custom.mcpc     # → custom output path
+```
+
+### 8.3 Registry and Marketplace
+
+The `.mcpc` format is designed for distribution through registries and marketplaces. This spec does not define a registry protocol, but the archive format supports:
+
+- **Discovery:** The manifest's `name`, `version`, `description`, and `author` fields provide metadata for searchable catalogs.
+- **Dependency resolution:** The `extends` field declares cross-bundle dependencies by package name and semver range, enabling dependency graphs.
+- **Integrity:** Archives can be checksummed (SHA-256) and signed (see open question on bundle signing).
+- **Compatibility filtering:** The `compiler_compatibility` field allows marketplaces to filter bundles by supported LLM.
+
+---
+
+## 9. Reference Implementation
 
 The reference implementation is [Synth Ops](https://github.com/jmfullerton96/synthops) — an intelligent infrastructure operations system built as an MCP Contract bundle.
 
@@ -520,7 +571,7 @@ Synth demonstrates:
 
 ---
 
-## 9. Open Questions
+## 10. Open Questions
 
 The following questions are unresolved in this draft and invite community input:
 
@@ -532,13 +583,13 @@ The following questions are unresolved in this draft and invite community input:
 
 4. **Bundle signing.** Should the spec define a mechanism for cryptographic signing of bundles and individual layers to establish authorship and integrity?
 
-### 9.1 Resolved
+### 10.1 Resolved
 
 - **Resource layer** (resolved in v0.1.0-draft) — Resources are modeled as `provides` entries on the Tool layer, not as a separate layer. See §3.5.
 
 ---
 
-## 10. Conclusion
+## 11. Conclusion
 
 MCP Contract proposes that the atomic unit of AI workflow distribution should not be the server but the *layer*. By separating reasoning (Prompts), execution (Tools), rendering (Apps), and platform adaptation (Skills) into independently authored, versioned, and composable layers with typed contracts between them, MCP Contract enables a software engineering model for AI workflows that mirrors the composability, reusability, and collaboration patterns that made traditional software ecosystems productive.
 
