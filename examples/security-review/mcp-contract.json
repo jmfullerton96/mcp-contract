@@ -1,0 +1,57 @@
+{
+  "$schema": "https://mcp-contract.dev/schema/0.1.0.json",
+  "name": "security-review",
+  "version": "0.1.0",
+  "description": "Security-focused code review that extends code-review prompts with a vulnerability scanning tool layer.",
+  "author": {
+    "name": "Example Author"
+  },
+  "license": "Apache-2.0",
+
+  "extends": [
+    {
+      "package": "@mcpc/code-review",
+      "version": "^0.1.0",
+      "layer": "prompts"
+    }
+  ],
+
+  "layers": {
+    "tools": {
+      "entry": "tools/server.py",
+      "runtime": "python",
+      "provides": [
+        {
+          "name": "vulnerability-scan",
+          "schema": "schemas/vulnerability-scan.json",
+          "description": "Static analysis scan for OWASP Top 10 and CWE-classified vulnerabilities."
+        }
+      ]
+    },
+
+    "apps": {
+      "entry": "apps/report.html",
+      "consumes": [
+        {
+          "name": "code-review-output",
+          "schema": "schemas/code-review-output.json"
+        },
+        {
+          "name": "vulnerability-scan",
+          "schema": "schemas/vulnerability-scan.json"
+        }
+      ]
+    },
+
+    "skills": {
+      "targets": {
+        "claude": "skills/claude.md"
+      }
+    }
+  },
+
+  "compose": {
+    "chain": ["prompts", "tools", "apps"],
+    "fallback": "prompts-only"
+  }
+}
