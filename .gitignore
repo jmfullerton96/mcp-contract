@@ -17,3 +17,10 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+
+# Secrets
+.env
+.env.*
+
+# Build artifacts
+*.mcpc
