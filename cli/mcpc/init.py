@@ -40,7 +40,7 @@ TEMPLATES = {
 
 def _make_manifest(name: str, template: str) -> dict:
     manifest: dict = {
-        "$schema": "https://mcp-contract.dev/schema/0.1.0.json",
+        "$schema": "https://mcpcontracts.com/schema/0.1.0.json",
         "name": name,
         "version": "0.1.0",
         "description": "",
@@ -110,7 +110,7 @@ def _make_manifest(name: str, template: str) -> dict:
 
 def _make_schema(name: str, title: str, description: str) -> dict:
     return {
-        "$id": f"https://mcp-contract.dev/schemas/{name}/0.1.0",
+        "$id": f"https://mcpcontracts.com/schemas/{name}/0.1.0",
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "title": title,
         "description": description,

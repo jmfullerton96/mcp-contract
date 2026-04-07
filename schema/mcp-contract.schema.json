@@ -1,5 +1,5 @@
 {
-  "$id": "https://mcp-contract.dev/schema/0.1.0.json",
+  "$id": "https://mcpcontracts.com/schema/0.1.0.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "MCP Contract Manifest",
   "description": "Manifest format for MCP Contract bundles — declares layers, typed contracts, and composition rules.",

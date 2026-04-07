@@ -1,5 +1,5 @@
 {
-  "$id": "https://mcp-contract.dev/examples/due-diligence/schemas/comps-table/0.1.0",
+  "$id": "https://mcpcontracts.com/examples/due-diligence/schemas/comps-table/0.1.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CompsTable",
   "description": "Comparable company analysis output with peer metrics and aggregate multiples.",

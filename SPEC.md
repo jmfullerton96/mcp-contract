@@ -140,7 +140,7 @@ my-workflow/
 
 ```json
 {
-  "$schema": "https://mcp-contract.dev/schema/0.1.0.json",
+  "$schema": "https://mcpcontracts.com/schema/0.1.0.json",
   "name": "due-diligence",
   "version": "0.1.0",
   "description": "Financial due diligence workflow with SEC filing analysis and comparable company modeling.",
@@ -219,7 +219,7 @@ Each `provides` and `consumes` entry references a JSON Schema file that defines 
 
 ```json
 {
-  "$id": "https://mcp-contract.dev/schemas/comps-table/0.1.0",
+  "$id": "https://mcpcontracts.com/schemas/comps-table/0.1.0",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "CompsTable",
   "description": "Comparable company analysis output.",

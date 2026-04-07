@@ -44,7 +44,7 @@ Reference it in your manifest:
 
 ```json
 {
-  "$schema": "https://mcp-contract.dev/schema/0.1.0.json",
+  "$schema": "https://mcpcontracts.com/schema/0.1.0.json",
   "name": "my-workflow",
   "version": "0.1.0",
   "layers": { ... }
