@@ -303,6 +303,8 @@ Tool layer rules:
 - Tools must not assume a specific prompt or app layer. A tool's interface is its schema, not its caller.
 - Tool schemas must be backward-compatible within a major version. Adding optional fields is non-breaking. Removing required fields or changing types is breaking.
 
+**Resources.** MCP defines Resources as read-only data sources (files, database records, API responses) distinct from invocable Tools. In MCP Contract, Resources are modeled as `provides` entries on the Tool layer — not as a separate layer. Resources and Tools share the same MCP server, the same authorship boundary, and the same versioning lifecycle. A resource's read-only schema is declared as a contract entry like any tool output. Consumers (apps, prompts) reference resources by contract name without needing to know whether the provider is a tool invocation or a resource read.
+
 ### 3.6 App Layer Conventions
 
 Apps are UI components that consume tool output schemas and/or prompt output shapes to render user-facing views.
@@ -522,15 +524,17 @@ Synth demonstrates:
 
 The following questions are unresolved in this draft and invite community input:
 
-1. **Resource layer.** MCP defines Resources as a separate primitive from Tools. Should MCP Contract treat Resources as a distinct layer, or are they a subset of the Tool layer's provides contracts?
+1. **Multi-step orchestration.** The `compose.chain` field implies linear execution (prompts → tools → apps). How should the spec handle iterative loops, conditional branching, or parallel tool invocation?
 
-2. **Multi-step orchestration.** The `compose.chain` field implies linear execution (prompts → tools → apps). How should the spec handle iterative loops, conditional branching, or parallel tool invocation?
+2. **Auth propagation.** When composing layers from different authors, how should authentication credentials propagate? Should the manifest declare auth requirements per layer?
 
-3. **Auth propagation.** When composing layers from different authors, how should authentication credentials propagate? Should the manifest declare auth requirements per layer?
+3. **Streaming contracts.** Current schemas define request/response shapes. Should the spec support streaming output schemas for real-time tool output and progressive app rendering?
 
-4. **Streaming contracts.** Current schemas define request/response shapes. Should the spec support streaming output schemas for real-time tool output and progressive app rendering?
+4. **Bundle signing.** Should the spec define a mechanism for cryptographic signing of bundles and individual layers to establish authorship and integrity?
 
-5. **Bundle signing.** Should the spec define a mechanism for cryptographic signing of bundles and individual layers to establish authorship and integrity?
+### 9.1 Resolved
+
+- **Resource layer** (resolved in v0.1.0-draft) — Resources are modeled as `provides` entries on the Tool layer, not as a separate layer. See §3.5.
 
 ---
 

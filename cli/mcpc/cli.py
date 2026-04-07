@@ -7,6 +7,8 @@ import sys
 
 from mcpc import __version__
 from mcpc.init import TEMPLATES, init_bundle
+from mcpc.pack import pack_bundle
+from mcpc.test import test_bundle
 from mcpc.validate import validate_bundle
 
 
@@ -65,6 +67,59 @@ def main(argv: list[str] | None = None) -> None:
         help="Bundle template (default: full).",
     )
 
+    # -- pack --
+    pack_parser = subparsers.add_parser(
+        "pack",
+        help="Pack a bundle into a .mcpc archive.",
+        description=(
+            "Validates the bundle, then creates a .mcpc archive (zip) "
+            "containing all bundle files."
+        ),
+    )
+    pack_parser.add_argument(
+        "path",
+        nargs="?",
+        default=".",
+        help="Path to the bundle directory (default: current directory).",
+    )
+    pack_parser.add_argument(
+        "--output", "-o",
+        default=None,
+        help="Output file path (default: <name>-<version>.mcpc in parent directory).",
+    )
+    pack_parser.add_argument(
+        "--quiet",
+        action="store_true",
+        help="Only print errors, suppress informational output.",
+    )
+
+    # -- test --
+    test_parser = subparsers.add_parser(
+        "test",
+        help="Run structural tests on bundle layers.",
+        description=(
+            "Tests layer content quality: prompt frontmatter, schema "
+            "conventions, tool syntax, and app structure."
+        ),
+    )
+    test_parser.add_argument(
+        "path",
+        nargs="?",
+        default=".",
+        help="Path to the bundle directory (default: current directory).",
+    )
+    test_parser.add_argument(
+        "--layer",
+        choices=["prompts", "schemas", "tools", "apps"],
+        default=None,
+        help="Test only a specific layer.",
+    )
+    test_parser.add_argument(
+        "--quiet",
+        action="store_true",
+        help="Only print failures, suppress informational output.",
+    )
+
     args = parser.parse_args(argv)
 
     if args.command is None:
@@ -77,4 +132,12 @@ def main(argv: list[str] | None = None) -> None:
 
     if args.command == "init":
         ok = init_bundle(args.name, args.path, args.template)
+        sys.exit(0 if ok else 1)
+
+    if args.command == "pack":
+        ok = pack_bundle(args.path, output=args.output, quiet=args.quiet)
+        sys.exit(0 if ok else 1)
+
+    if args.command == "test":
+        ok = test_bundle(args.path, layer=args.layer, quiet=args.quiet)
         sys.exit(0 if ok else 1)

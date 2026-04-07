@@ -6,8 +6,8 @@ Specification for composable AI workflow bundles with typed contracts between la
 
 - `SPEC.md` — The full specification (v0.1.0-draft). Source of truth for all conventions.
 - `schema/mcp-contract.schema.json` — JSON Schema for validating `mcp-contract.json` manifests.
-- `cli/` — The `mcpc` CLI (Python, stdlib only, no external deps). Commands: `validate`, `init`.
-- `examples/` — Example bundles. `due-diligence/` is full (all layers), `code-review/` is minimal (prompts-only).
+- `cli/` — The `mcpc` CLI (Python, stdlib only, no external deps). Commands: `validate`, `init`, `pack`, `test`.
+- `examples/` — Example bundles. `due-diligence/` is full (all layers), `code-review/` is minimal (prompts-only), `security-review/` demonstrates cross-author composition via `extends`.
 
 ## Key Concepts
 
@@ -22,6 +22,10 @@ PYTHONPATH=cli python3 -m mcpc validate path/to/bundle
 # Scaffold a new bundle
 PYTHONPATH=cli python3 -m mcpc init my-bundle --template full
 PYTHONPATH=cli python3 -m mcpc init my-bundle --template prompts-only
+
+# Pack a bundle into a .mcpc archive
+PYTHONPATH=cli python3 -m mcpc pack path/to/bundle
+PYTHONPATH=cli python3 -m mcpc pack path/to/bundle -o output.mcpc
 ```
 
 After `pip install -e cli/`, use `mcpc` directly instead of the `PYTHONPATH` prefix.
