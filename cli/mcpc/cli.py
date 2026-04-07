@@ -9,6 +9,7 @@ from mcpc import __version__
 from mcpc.init import TEMPLATES, init_bundle
 from mcpc.pack import pack_bundle
 from mcpc.test import test_bundle
+from mcpc.unpack import unpack_bundle
 from mcpc.validate import validate_bundle
 
 
@@ -120,6 +121,30 @@ def main(argv: list[str] | None = None) -> None:
         help="Only print failures, suppress informational output.",
     )
 
+    # -- unpack --
+    unpack_parser = subparsers.add_parser(
+        "unpack",
+        help="Extract a .mcpc archive into a bundle directory.",
+        description=(
+            "Extracts a .mcpc archive, verifies it contains a valid "
+            "manifest, and writes the bundle to a directory."
+        ),
+    )
+    unpack_parser.add_argument(
+        "archive",
+        help="Path to the .mcpc archive.",
+    )
+    unpack_parser.add_argument(
+        "--output", "-o",
+        default=None,
+        help="Output directory (default: archive stem in current directory).",
+    )
+    unpack_parser.add_argument(
+        "--quiet",
+        action="store_true",
+        help="Only print errors, suppress informational output.",
+    )
+
     args = parser.parse_args(argv)
 
     if args.command is None:
@@ -140,4 +165,8 @@ def main(argv: list[str] | None = None) -> None:
 
     if args.command == "test":
         ok = test_bundle(args.path, layer=args.layer, quiet=args.quiet)
+        sys.exit(0 if ok else 1)
+
+    if args.command == "unpack":
+        ok = unpack_bundle(args.archive, output=args.output, quiet=args.quiet)
         sys.exit(0 if ok else 1)

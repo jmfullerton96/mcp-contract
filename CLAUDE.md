@@ -6,7 +6,7 @@ Specification for composable AI workflow bundles with typed contracts between la
 
 - `SPEC.md` — The full specification (v0.1.0-draft). Source of truth for all conventions.
 - `schema/mcp-contract.schema.json` — JSON Schema for validating `mcp-contract.json` manifests.
-- `cli/` — The `mcpc` CLI (Python, stdlib only, no external deps). Commands: `validate`, `init`, `pack`, `test`.
+- `cli/` — The `mcpc` CLI (Python, stdlib only, no external deps). Commands: `validate`, `init`, `pack`, `unpack`, `test`.
 - `examples/` — Example bundles. `due-diligence/` is full (all layers), `code-review/` is minimal (prompts-only), `security-review/` demonstrates cross-author composition via `extends`.
 
 ## Key Concepts
