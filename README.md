@@ -53,7 +53,7 @@ Reference it in your manifest:
 
 ## Status
 
-**v0.1.0-draft** — Spec, manifest schema, and one reference implementation. No CLI tooling or package manager yet.
+**v0.1.0-draft** — Spec, manifest schema, CLI (`mcpc validate`, `init`, `pack`, `test`), and one reference implementation.
 
 ## License
 

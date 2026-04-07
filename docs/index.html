@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCP Contract — Composable AI Workflow Bundles</title>
+  <meta name="description" content="A specification for composable AI workflow bundles with typed contracts between layers.">
+  <meta property="og:title" content="MCP Contract">
+  <meta property="og:description" content="Composable AI workflow bundles with typed contracts between layers.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mcpcontracts.com">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --green: #3fb950;
+      --mono: 'SF Mono', 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    header {
+      padding: 80px 0 40px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .tagline {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      max-width: 560px;
+      margin: 0 auto 32px;
+    }
+
+    .badges {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 0.8rem;
+      font-family: var(--mono);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    .badge.version { border-color: var(--green); color: var(--green); }
+
+    .cta {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 60px;
+    }
+
+    .cta a {
+      display: inline-block;
+      padding: 12px 28px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: opacity 0.15s;
+    }
+
+    .cta a:hover { opacity: 0.85; }
+
+    .cta .primary {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    .cta .secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .diagram {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 32px;
+      margin-bottom: 60px;
+      overflow-x: auto;
+    }
+
+    .diagram pre {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      line-height: 1.5;
+      color: var(--text-muted);
+    }
+
+    .diagram .highlight { color: var(--accent); }
+    .diagram .green { color: var(--green); }
+
+    .layers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 60px;
+    }
+
+    @media (max-width: 600px) {
+      .layers { grid-template-columns: 1fr; }
+      h1 { font-size: 1.8rem; }
+    }
+
+    .layer-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .layer-card h3 {
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+    }
+
+    .layer-card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .layer-card .analogy {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+      margin-top: 8px;
+    }
+
+    .install {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px 32px;
+      margin-bottom: 60px;
+    }
+
+    .install h2 {
+      font-size: 1rem;
+      margin-bottom: 16px;
+    }
+
+    .install code {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.9rem;
+      color: var(--green);
+      margin-bottom: 8px;
+    }
+
+    .install .comment {
+      color: var(--text-muted);
+    }
+
+    section {
+      margin-bottom: 60px;
+    }
+
+    section h2 {
+      font-size: 1.3rem;
+      margin-bottom: 16px;
+    }
+
+    section p {
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    section a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    section a:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>MCP Contract</h1>
+    <p class="tagline">A specification for composable AI workflow bundles with typed contracts between layers.</p>
+    <div class="badges">
+      <span class="badge version">v0.1.0-draft</span>
+      <span class="badge">Apache-2.0</span>
+      <span class="badge">JSON Schema draft 2020-12</span>
+    </div>
+    <div class="cta">
+      <a class="primary" href="https://github.com/jmfullerton96/mcp-contract/blob/main/SPEC.md">Read the Spec</a>
+      <a class="secondary" href="https://github.com/jmfullerton96/mcp-contract">GitHub</a>
+    </div>
+  </header>
+
+  <div class="diagram">
+<pre>
+<span class="highlight">Prompts</span> ──provides──> ["analysis-request"]
+                            |
+<span class="highlight">Tools</span>   ──provides──> ["sec-filings", "comps-table"]
+                            |
+<span class="highlight">Apps</span>    ──consumes──> ["comps-table", "analysis-request"]
+
+<span class="highlight">Skills</span>  ──targets───> ["claude", "gpt"]
+
+<span class="green">Compiler</span> (Claude, GPT, Gemini, Llama) links it all at runtime.
+</pre>
+  </div>
+
+  <div class="layers">
+    <div class="layer-card">
+      <h3>Prompts</h3>
+      <p>Reasoning logic. What to think about and what output shape to produce.</p>
+      <div class="analogy">analogous to source code</div>
+    </div>
+    <div class="layer-card">
+      <h3>Tools</h3>
+      <p>Runtime execution. APIs, databases, computation engines with typed schemas.</p>
+      <div class="analogy">analogous to runtime libraries</div>
+    </div>
+    <div class="layer-card">
+      <h3>Apps</h3>
+      <p>Interactive views. Dashboards, reports, forms that consume contract schemas.</p>
+      <div class="analogy">analogous to UI frameworks</div>
+    </div>
+    <div class="layer-card">
+      <h3>Skills</h3>
+      <p>Platform adaptation. Thin wrappers for Claude, GPT, Cursor, etc.</p>
+      <div class="analogy">analogous to compiler flags</div>
+    </div>
+  </div>
+
+  <div class="install">
+    <h2>Get Started</h2>
+    <code><span class="comment"># Install the CLI</span></code>
+    <code>pip install mcpc</code>
+    <code>&nbsp;</code>
+    <code><span class="comment"># Scaffold a new bundle</span></code>
+    <code>mcpc init my-workflow</code>
+    <code>&nbsp;</code>
+    <code><span class="comment"># Validate contracts</span></code>
+    <code>mcpc validate</code>
+    <code>&nbsp;</code>
+    <code><span class="comment"># Pack for distribution</span></code>
+    <code>mcpc pack</code>
+  </div>
+
+  <section>
+    <h2>Why?</h2>
+    <p>MCP servers are monoliths. To use one server's prompts with another's tools and a third's UI, you fork all three. MCP Contract separates bundles into independently authored, versioned, and composable layers wired together through typed contracts.</p>
+    <p>No custom schema language. No new runtime. Just a manifest format that makes composition, package managers, and marketplaces possible.</p>
+  </section>
+
+  <section>
+    <h2>Reference Implementation</h2>
+    <p><a href="https://github.com/jmfullerton96/synthops">Synth Ops</a> is an intelligent infrastructure operations system built as an MCP Contract bundle.</p>
+  </section>
+
+  <section>
+    <h2>Schema</h2>
+    <p>The manifest schema is hosted at <a href="/schema/0.1.0.json"><code>mcpcontracts.com/schema/0.1.0.json</code></a> for editor validation.</p>
+  </section>
+</div>
+
+<footer>
+  <a href="https://github.com/jmfullerton96/mcp-contract">GitHub</a>
+  &middot;
+  <a href="https://github.com/jmfullerton96/mcp-contract/blob/main/SPEC.md">Specification</a>
+  &middot;
+  <a href="https://github.com/jmfullerton96/mcp-contract/blob/main/CONTRIBUTING.md">Contributing</a>
+</footer>
+
+</body>
+</html>

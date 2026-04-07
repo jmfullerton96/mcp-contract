@@ -1,0 +1,202 @@
+{
+  "$id": "https://mcpcontracts.com/schema/0.1.0.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MCP Contract Manifest",
+  "description": "Manifest format for MCP Contract bundles — declares layers, typed contracts, and composition rules.",
+  "type": "object",
+  "required": ["name", "version", "layers"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema URI for this manifest format."
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "Bundle name. Lowercase, hyphens only."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+",
+      "description": "Semantic version of the bundle."
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of what this bundle does."
+    },
+    "author": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "url": { "type": "string", "format": "uri" }
+      },
+      "required": ["name"]
+    },
+    "license": {
+      "type": "string",
+      "description": "SPDX license identifier."
+    },
+    "extends": {
+      "type": "array",
+      "description": "External layer dependencies for cross-author composition.",
+      "items": {
+        "type": "object",
+        "required": ["package", "version", "layer"],
+        "properties": {
+          "package": {
+            "type": "string",
+            "description": "Package identifier (e.g., @alice/diligence-prompts)."
+          },
+          "version": {
+            "type": "string",
+            "description": "Semver range (e.g., ^1.0.0)."
+          },
+          "layer": {
+            "type": "string",
+            "enum": ["prompts", "tools", "apps", "skills"],
+            "description": "Which layer this dependency provides."
+          }
+        }
+      }
+    },
+    "layers": {
+      "type": "object",
+      "description": "Layer declarations with entry points and contracts.",
+      "properties": {
+        "prompts": {
+          "$ref": "#/$defs/promptLayer"
+        },
+        "tools": {
+          "$ref": "#/$defs/toolLayer"
+        },
+        "apps": {
+          "$ref": "#/$defs/appLayer"
+        },
+        "skills": {
+          "$ref": "#/$defs/skillLayer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "compiler_compatibility": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of LLM compilers this bundle is compatible with."
+    },
+    "compose": {
+      "type": "object",
+      "properties": {
+        "chain": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["prompts", "tools", "apps"]
+          },
+          "description": "Execution order of layers."
+        },
+        "fallback": {
+          "type": "string",
+          "description": "Fallback mode if some layers are unavailable (e.g., 'prompts-only')."
+        }
+      }
+    }
+  },
+  "$defs": {
+    "contractEntry": {
+      "type": "object",
+      "required": ["name", "schema"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Contract name — used to match provides to consumes across layers."
+        },
+        "schema": {
+          "type": "string",
+          "description": "Relative path to a JSON Schema file defining the contract shape."
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of what this contract represents."
+        }
+      }
+    },
+    "promptLayer": {
+      "type": "object",
+      "required": ["entry"],
+      "properties": {
+        "entry": {
+          "type": "string",
+          "description": "Relative path to the primary prompt Markdown file."
+        },
+        "modules": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Additional prompt modules."
+        },
+        "provides": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/contractEntry" },
+          "description": "Schemas this layer provides."
+        }
+      }
+    },
+    "toolLayer": {
+      "type": "object",
+      "required": ["entry"],
+      "properties": {
+        "entry": {
+          "type": "string",
+          "description": "Relative path to the MCP server entry point."
+        },
+        "runtime": {
+          "type": "string",
+          "enum": ["node", "python", "go", "rust"],
+          "description": "Runtime for the tool server."
+        },
+        "dependencies": {
+          "type": "string",
+          "description": "Relative path to dependency manifest (package.json, requirements.txt, etc.)."
+        },
+        "provides": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/contractEntry" },
+          "description": "Schemas this layer provides."
+        }
+      }
+    },
+    "appLayer": {
+      "type": "object",
+      "required": ["entry"],
+      "properties": {
+        "entry": {
+          "type": "string",
+          "description": "Relative path to the primary app component."
+        },
+        "modules": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Additional app modules."
+        },
+        "consumes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/contractEntry" },
+          "description": "Schemas this layer consumes from other layers."
+        }
+      }
+    },
+    "skillLayer": {
+      "type": "object",
+      "required": ["targets"],
+      "properties": {
+        "targets": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "description": "Relative path to the platform-specific skill Markdown file."
+          },
+          "description": "Map of compiler target to skill file path."
+        }
+      }
+    }
+  }
+}
