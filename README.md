@@ -1,5 +1,10 @@
 # MCP Contract
 
+[![Spec](https://img.shields.io/badge/spec-v0.1.0--draft-blue)](SPEC.md)
+[![License](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
+[![JSON Schema](https://img.shields.io/badge/JSON%20Schema-draft%202020--12-orange)](schema/mcp-contract.schema.json)
+[![Website](https://img.shields.io/badge/web-mcpcontracts.com-purple)](https://mcpcontracts.com)
+
 A specification for composable AI workflow bundles with typed contracts between layers.
 
 ## The Problem
