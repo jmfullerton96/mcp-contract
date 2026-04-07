@@ -4,15 +4,16 @@ MCP Contract is in **v0.1.0-draft** status. Contributions that shape the specifi
 
 ## Open Questions
 
-The spec ([SPEC.md Section 9](SPEC.md#9-open-questions)) identifies five unresolved design questions. These are the highest-value areas for community input:
+The spec ([SPEC.md Section 10](SPEC.md#10-open-questions)) identifies four unresolved design questions. These are the highest-value areas for community input:
 
-1. **Resource layer** — Should MCP Resources be a distinct layer, or a subset of the Tool layer's `provides` contracts?
-2. **Multi-step orchestration** — How should the spec handle iterative loops, conditional branching, or parallel tool invocation beyond the linear `compose.chain`?
-3. **Auth propagation** — When composing layers from different authors, how should authentication credentials propagate across layer boundaries?
-4. **Streaming contracts** — Should the spec support streaming output schemas for real-time tool output and progressive app rendering?
-5. **Bundle signing** — Should the spec define cryptographic signing for bundles and individual layers?
+1. **Multi-step orchestration** — How should the spec handle iterative loops, conditional branching, or parallel tool invocation beyond the linear `compose.chain`?
+2. **Auth propagation** — When composing layers from different authors, how should authentication credentials propagate across layer boundaries?
+3. **Streaming contracts** — Should the spec support streaming output schemas for real-time tool output and progressive app rendering?
+4. **Bundle signing** — Should the spec define cryptographic signing for bundles and individual layers?
 
-If you have experience or opinions on any of these, open an issue with the relevant question number (e.g., "Q3: Auth propagation for OAuth-based tool layers").
+If you have experience or opinions on any of these, open an issue with the relevant question number (e.g., "Q2: Auth propagation for OAuth-based tool layers").
+
+The Resource layer question has been resolved — Resources are modeled as `provides` entries on the Tool layer (see SPEC.md §3.5).
 
 ## What to Contribute
 
