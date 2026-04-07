@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install mcpc
+        run: pip install -e cli/
+
+      - name: Validate all example bundles
+        run: |
+          mcpc validate examples/due-diligence
+          mcpc validate examples/code-review
+          mcpc validate examples/security-review
+
+      - name: Test all example bundles
+        run: |
+          mcpc test examples/due-diligence
+          mcpc test examples/code-review
+          mcpc test examples/security-review
+
+      - name: Pack and verify archives
+        run: |
+          mcpc pack examples/due-diligence -o /tmp/due-diligence.mcpc
+          mcpc pack examples/code-review -o /tmp/code-review.mcpc
+          mcpc pack examples/security-review -o /tmp/security-review.mcpc
+          python -c "import zipfile; zipfile.ZipFile('/tmp/due-diligence.mcpc').testzip()"
+          python -c "import zipfile; zipfile.ZipFile('/tmp/code-review.mcpc').testzip()"
+          python -c "import zipfile; zipfile.ZipFile('/tmp/security-review.mcpc').testzip()"
