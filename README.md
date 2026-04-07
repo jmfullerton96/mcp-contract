@@ -1,5 +1,9 @@
 <p align="center">
-  <img src="docs/logo-transparent.png" alt="MCP Contract" width="500">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/logo-dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/logo-light.png">
+    <img src="docs/logo-light.png" alt="MCP Contract" width="500">
+  </picture>
 </p>
 
 [![CI](https://github.com/jmfullerton96/mcp-contract/actions/workflows/ci.yml/badge.svg)](https://github.com/jmfullerton96/mcp-contract/actions/workflows/ci.yml)
@@ -9,7 +13,7 @@
 [![JSON Schema](https://img.shields.io/badge/JSON%20Schema-draft%202020--12-orange)](schema/mcp-contract.schema.json)
 [![Website](https://img.shields.io/badge/web-mcpcontracts.com-purple)](https://mcpcontracts.com)
 
-A specification for composable AI workflow bundles with typed contracts between layers.
+A specification for composable AI workflow bundles with typed contracts between layers. Built on the [Model Context Protocol](https://modelcontextprotocol.io), an open standard originally developed by Anthropic. MCP Contract is an independent open-source project.
 
 ## The Problem
 
