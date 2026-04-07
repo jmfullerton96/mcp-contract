@@ -235,11 +235,24 @@ def _validate_contracts(manifest: dict) -> tuple[list[str], list[str]]:
         if name:
             consumed[name] = "apps"
 
+    # Check which layers are covered by extends
+    extended_layers: set[str] = set()
+    for ext in manifest.get("extends", []):
+        layer = ext.get("layer")
+        if layer:
+            extended_layers.add(layer)
+
     for name, consumer in consumed.items():
         if name not in provided:
-            errors.append(
-                f"{consumer} consumes '{name}' but no layer provides it"
-            )
+            if extended_layers & {"prompts", "tools"}:
+                warnings.append(
+                    f"{consumer} consumes '{name}' — expected from extended package "
+                    f"(not locally provided)"
+                )
+            else:
+                errors.append(
+                    f"{consumer} consumes '{name}' but no layer provides it"
+                )
 
     # Warn about provided-but-not-consumed (informational, not an error)
     for name, provider in provided.items():
@@ -248,6 +261,123 @@ def _validate_contracts(manifest: dict) -> tuple[list[str], list[str]]:
                 f"'{provider}' provides '{name}' but no layer consumes it "
                 f"(may flow through prompt reasoning)"
             )
+
+    return errors, warnings
+
+
+def _load_schema(bundle_dir: Path, rel_path: str) -> dict | None:
+    """Load and parse a JSON Schema file. Returns None on failure."""
+    full_path = bundle_dir / rel_path
+    if not full_path.exists():
+        return None
+    try:
+        with open(full_path) as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return None
+
+
+def _check_schema_compatibility(
+    provider_schema: dict,
+    consumer_schema: dict,
+    path: str = "",
+) -> list[str]:
+    """Check that a consumer schema is satisfiable by a provider schema.
+
+    Returns a list of incompatibility descriptions. An empty list means
+    the schemas are compatible.
+
+    Compatibility means: any data valid under the provider schema can be
+    consumed by the consumer schema. Concretely:
+      - Every required field in the consumer must exist in the provider
+      - Field types must match
+      - Nested objects are checked recursively
+      - Enum values in the consumer must be a subset of the provider's
+    """
+    issues: list[str] = []
+    prefix = f"{path}." if path else ""
+
+    # Type compatibility
+    p_type = provider_schema.get("type")
+    c_type = consumer_schema.get("type")
+    if p_type and c_type and p_type != c_type:
+        issues.append(f"{prefix}type: provider is '{p_type}', consumer expects '{c_type}'")
+        return issues  # No point checking deeper if types differ
+
+    # Enum compatibility — consumer values must be subset of provider
+    p_enum = provider_schema.get("enum")
+    c_enum = consumer_schema.get("enum")
+    if c_enum and p_enum:
+        extra = set(c_enum) - set(p_enum)
+        if extra:
+            issues.append(f"{prefix}enum: consumer expects values {sorted(extra)} not in provider")
+
+    # Object property compatibility
+    if c_type == "object" or (not c_type and "properties" in consumer_schema):
+        c_props = consumer_schema.get("properties", {})
+        p_props = provider_schema.get("properties", {})
+        c_required = set(consumer_schema.get("required", []))
+
+        # Every required field in consumer must exist in provider
+        for field in c_required:
+            if field not in p_props:
+                issues.append(f"{prefix}{field}: required by consumer but not in provider schema")
+
+        # Recursively check shared properties
+        for field, c_field_schema in c_props.items():
+            if field in p_props:
+                issues.extend(
+                    _check_schema_compatibility(p_props[field], c_field_schema, f"{prefix}{field}")
+                )
+
+    # Array item compatibility
+    if c_type == "array" or (not c_type and "items" in consumer_schema):
+        c_items = consumer_schema.get("items")
+        p_items = provider_schema.get("items")
+        if c_items and p_items and isinstance(c_items, dict) and isinstance(p_items, dict):
+            issues.extend(
+                _check_schema_compatibility(p_items, c_items, f"{prefix}items")
+            )
+
+    return issues
+
+
+def _validate_schema_compatibility(
+    manifest: dict, bundle_dir: Path
+) -> tuple[list[str], list[str]]:
+    """Check structural compatibility between matched provides/consumes schemas."""
+    errors: list[str] = []
+    warnings: list[str] = []
+    layers = manifest.get("layers", {})
+
+    # Build provides map: name -> (layer, schema_path)
+    provides_map: dict[str, tuple[str, str]] = {}
+    for layer_name in ("prompts", "tools"):
+        layer = layers.get(layer_name, {})
+        for entry in layer.get("provides", []):
+            name = entry.get("name")
+            schema = entry.get("schema")
+            if name and schema:
+                provides_map[name] = (layer_name, schema)
+
+    # Check each consumes entry against its provider
+    apps = layers.get("apps", {})
+    for entry in apps.get("consumes", []):
+        name = entry.get("name")
+        c_schema_path = entry.get("schema")
+        if not name or not c_schema_path or name not in provides_map:
+            continue
+
+        p_layer, p_schema_path = provides_map[name]
+        p_schema = _load_schema(bundle_dir, p_schema_path)
+        c_schema = _load_schema(bundle_dir, c_schema_path)
+
+        if p_schema is None or c_schema is None:
+            continue  # File errors caught by _validate_files
+
+        issues = _check_schema_compatibility(p_schema, c_schema)
+        for issue in issues:
+            errors.append(f"schema incompatibility for '{name}' ({p_layer} → apps): {issue}")
 
     return errors, warnings
 
@@ -362,6 +492,12 @@ def validate_bundle(path: str, quiet: bool = False) -> bool:
     # 3. File integrity
     if "layers" in manifest and isinstance(manifest["layers"], dict):
         errors, warnings = _validate_files(manifest, bundle_dir)
+        all_errors.extend(errors)
+        all_warnings.extend(warnings)
+
+    # 4. Schema compatibility
+    if "layers" in manifest and isinstance(manifest["layers"], dict):
+        errors, warnings = _validate_schema_compatibility(manifest, bundle_dir)
         all_errors.extend(errors)
         all_warnings.extend(warnings)
 
