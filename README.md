@@ -1,6 +1,7 @@
 # MCP Contract
 
 [![CI](https://github.com/jmfullerton96/mcp-contract/actions/workflows/ci.yml/badge.svg)](https://github.com/jmfullerton96/mcp-contract/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/mcpc-cli)](https://pypi.org/project/mcpc-cli/)
 [![Spec](https://img.shields.io/badge/spec-v0.1.0--draft-blue)](SPEC.md)
 [![License](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
 [![JSON Schema](https://img.shields.io/badge/JSON%20Schema-draft%202020--12-orange)](schema/mcp-contract.schema.json)

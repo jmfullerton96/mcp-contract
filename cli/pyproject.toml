@@ -3,7 +3,7 @@ requires = ["setuptools>=68.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "mcpc"
+name = "mcpc-cli"
 version = "0.1.0"
 description = "CLI for the MCP Contract specification — validate, inspect, and manage contract bundles."
 readme = "README.md"
