@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MCP Contract — Composable AI Workflow Bundles</title>
-  <meta name="description" content="A specification for composable AI workflow bundles with typed contracts between layers.">
+  <title>MCP Contract — Project structure for Claude extensions</title>
+  <meta name="description" content="A project structure for Claude extensions that have outgrown a single file. Four layers with typed JSON Schema contracts between them.">
   <meta property="og:title" content="MCP Contract">
-  <meta property="og:description" content="Composable AI workflow bundles with typed contracts between layers.">
+  <meta property="og:description" content="A project structure for Claude extensions that have outgrown a single file.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://mcpcontracts.com">
   <style>
@@ -209,6 +209,12 @@
       text-decoration: underline;
     }
 
+    section p.footnote {
+      font-size: 0.9rem;
+      font-style: italic;
+      opacity: 0.75;
+    }
+
     footer {
       border-top: 1px solid var(--border);
       padding: 32px 0;
@@ -228,7 +234,7 @@
 <div class="container">
   <header>
     <h1>MCP Contract</h1>
-    <p class="tagline">A specification for composable AI workflow bundles with typed contracts between layers.</p>
+    <p class="tagline">A project structure for Claude extensions that have outgrown a single file.</p>
     <div class="badges">
       <span class="badge version">v0.1.0-draft</span>
       <span class="badge">Apache-2.0</span>
@@ -304,8 +310,9 @@ Claude/ChatGPT = the compiler
 
   <section>
     <h2>Why?</h2>
-    <p>MCP servers are monoliths. To use one server's prompts with another's tools and a third's UI, you fork all three. MCP Contract separates bundles into independently authored, versioned, and composable layers wired together through typed contracts.</p>
-    <p>No custom schema language. No new runtime. Just a manifest format that makes composition, package managers, and marketplaces possible.</p>
+    <p>A small Claude extension is a single prompt file. Anything useful grows past that — a tool server, a UI, schemas, platform hints. Past a certain size, the layers start bleeding into each other: prompts name tools directly, tool servers grow reasoning, UIs render fields schemas no longer have, platform adaptation scatters.</p>
+    <p>MCP Contract is the layout that stops the drift. Four layers with explicit boundaries, a manifest that declares what each layer publishes and consumes, and a CLI that validates it. No custom schema language. No new runtime. Think <code>create-react-app</code> for Claude extensions.</p>
+    <p class="footnote">Typed contracts also permit cross-bundle composition downstream — but that's a consequence of the structure, not the reason to adopt it today.</p>
   </section>
 
   <section>

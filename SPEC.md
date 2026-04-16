@@ -9,25 +9,27 @@
 
 ## Abstract
 
-MCP Contract is a specification for decomposing AI workflow bundles into independently authored, versioned, and composable layers with typed contracts between them. It introduces a manifest format (`mcp-contract.json`) that declares the boundaries between reasoning logic (Prompts), execution bindings (Tools), rendering targets (Apps), and platform-specific adaptation (Skills), enabling mix-and-match composition across authors, runtimes, and LLM compilers.
+MCP Contract is a project structure for non-trivial Claude extensions. It defines a manifest format (`mcp-contract.json`) and a set of conventions that split a bundle into four layers — reasoning logic (Prompts), execution bindings (Tools), rendering targets (Apps), and platform-specific adaptation (Skills) — wired together by typed JSON Schema contracts. The goal is a layout that stays legible as an extension grows past a single file.
 
-This specification does not define a package manager, a runtime, or a marketplace. It defines the contract format that makes all of those possible.
+The spec emerged from the author's own project-structure pain while building Claude extensions — it is the layout that fixed that pain, formalized so other builders can adopt it. It does not define a package manager, a runtime, or a marketplace. The typed contracts between layers permit cross-author composition downstream, but composition is a consequence of the structure, not its motivation.
 
 ---
 
-## 1. Problem Statement
+## 1. Motivation
 
-### 1.1 The Monolith Problem
+### 1.1 Growing-pains in Claude extensions
 
-The current MCP ecosystem packages servers as monolithic units. An MCP server bundles its prompts, tool definitions, resource handlers, and (where applicable) UI rendering into a single artifact. The MCPB format (`.mcpb`) standardizes *packaging* — zip archives with a `manifest.json` — but does not standardize *decomposition*.
+A small Claude extension is a single prompt file. A slightly larger one adds an MCP tool server. A useful one adds an interactive UI, a second and third tool, a couple of schemas, and some platform-specific hints. Somewhere in that growth there is a point where the project stops fitting in the author's head, and past that point the layers start bleeding into each other:
 
-This creates three concrete problems:
+- **Prompts reference tool names directly.** Renaming or swapping a tool requires editing the reasoning.
+- **Tool servers accumulate reasoning.** Retry heuristics, ranking logic, and "should we even do this" checks land in the tool layer because that is the only place with state.
+- **UIs drift from schemas.** A tool's output shape changes, and the UI keeps rendering fields that no longer exist until a user notices.
+- **Platform adaptation scatters.** Claude Desktop artifact hints, Claude Code skill files, and Cursor-specific configuration end up wherever the author was working at the time.
+- **Schemas exist in multiple places and agree in none.**
 
-**Non-composability.** If a developer wants to use Server A's reasoning prompts with Server B's data tools and Server C's UI, they must fork all three and manually wire them together. There is no contract surface that enables this composition without full reimplementation.
+This is ordinary software-engineering entropy in a domain that does not yet have a conventional project layout. Every builder invents one, and every invented one drifts in similar ways.
 
-**Coarse-grained forking.** To change one layer — say, adapting prompts for a different analytical framework — a developer must fork the entire server. Version control, attribution, and upstream merges become intractable. The modification surface is the entire package rather than the specific layer that changed.
-
-**Platform coupling.** A bundle built for Claude Desktop may not function in Cursor, VS Code, or a custom agent runtime. Platform-specific adaptation is embedded in the server code rather than isolated in a separable layer, requiring reimplementation per platform rather than thin adaptation.
+MCP Contract is a layout that stops that drift. The contribution is the set of seams — Prompts, Tools, Apps, Skills — with typed contracts between them, plus a manifest and validator that make the seams enforceable.
 
 ### 1.2 The Compiler Analogy
 
@@ -48,17 +50,19 @@ This analogy is not decorative. It has structural consequences:
 - Compiler flags (Skills) adapt the build for a specific target without modifying source or libraries.
 - The build graph (composition order, dependency resolution, caching) is a separate concern from any individual layer.
 
-### 1.3 What Exists Today
+### 1.3 Adjacent work
 
-| Project | What it does | What it doesn't do |
-|---|---|---|
-| MCPB (.mcpb) | Packages servers as portable zip archives with manifest | No layer separation; server is atomic |
-| Microsoft APM | Agent package manager with dependency resolution | Bundles instructions + skills + plugins as one manifest; no typed contracts between layers |
-| MCP.bar | Registry of 1500+ MCP servers | Directory only; no composition, no versioning contracts |
-| NimbleBrain MCPB | Production-grade bundle format with cold-start optimization | Focused on DevOps (deployment, version drift); no architectural decomposition |
-| install-mcp | Meta-server for agent self-management | Manages servers, not layers within servers |
+Several existing projects address parts of the surrounding problem but do not prescribe an internal structure for a single extension:
 
-The gap is consistent: **no existing format treats Prompts, Tools, and Apps as separate composable layers with typed contracts between them.**
+| Project | What it does |
+|---|---|
+| MCPB (.mcpb) | Packages servers as portable zip archives with a manifest — packaging, not internal layout |
+| Microsoft APM | Agent package manager bundling instructions, skills, and plugins under one manifest |
+| MCP.bar | Directory of MCP servers |
+| NimbleBrain MCPB | Production bundle format focused on deployment and version drift |
+| install-mcp | Meta-server for agent self-management |
+
+MCP Contract sits at a different layer: it describes how to organize the inside of a single bundle. The manifest is additive to the MCP protocol and can coexist with any of the above.
 
 ---
 
@@ -591,9 +595,9 @@ The following questions are unresolved in this draft and invite community input:
 
 ## 11. Conclusion
 
-MCP Contract proposes that the atomic unit of AI workflow distribution should not be the server but the *layer*. By separating reasoning (Prompts), execution (Tools), rendering (Apps), and platform adaptation (Skills) into independently authored, versioned, and composable layers with typed contracts between them, MCP Contract enables a software engineering model for AI workflows that mirrors the composability, reusability, and collaboration patterns that made traditional software ecosystems productive.
+MCP Contract is an opinionated layout for a Claude extension that has grown past a single file. It proposes four seams — Prompts, Tools, Apps, Skills — with typed contracts between them, a manifest that declares those contracts, and a CLI that validates them. The goal is a project that stays legible as it grows.
 
-The specification is intentionally minimal. It defines the manifest format, the contract mechanism, and the layer conventions. Everything else — package managers, registries, runtimes, marketplaces — is downstream. The bet is that if the contract format is right, the ecosystem builds itself.
+The specification is intentionally minimal. It defines the manifest format, the contract mechanism, and the layer conventions. Everything else — package managers, registries, runtimes, marketplaces — is downstream, and permitted by the structure if enough extensions end up sharing it. The nearer-term bet is smaller: that one builder's project-structure problem is probably several builders' project-structure problem, and a shared skeleton is worth publishing.
 
 ---
 
